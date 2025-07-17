@@ -1,0 +1,14 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/syn23/Desktop/Proyects/Vue3/PortfolioProyects/messenger[39m
+
+ [32m✓[39m src/test/Messenger.spec.ts[2m > [22mDesktopMessenger.vue[2m > [22mcambia a la sección de grupos al hacer clic en el botón correspondiente[32m 90[2mms[22m[39m
+ [32m✓[39m src/test/Messenger.spec.ts[2m > [22mDesktopMessenger.vue[2m > [22mcambia a la sección de docs al hacer clic en el botón correspondiente[32m 27[2mms[22m[39m
+ [32m✓[39m src/test/Messenger.spec.ts[2m > [22mDesktopMessenger.vue[2m > [22menvía un mensaje al hacer clic en el botón de enviar[32m 65[2mms[22m[39m
+ [32m✓[39m src/test/Messenger.spec.ts[2m > [22mDesktopMessenger.vue[2m > [22mcambia el idioma a inglés[32m 22[2mms[22m[39m
+ [32m✓[39m src/test/Messenger.spec.ts[2m > [22mDesktopMessenger.vue[2m > [22mcambia a modo oscuro[32m 16[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 20:16:49
+[2m   Duration [22m 5.58s[2m (transform 1.02s, setup 146ms, collect 4.05s, tests 221ms, environment 618ms, prepare 143ms)[22m
+
