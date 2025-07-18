@@ -55,6 +55,7 @@
 - [Typescript](https://www.typescriptlang.org/)
 - [Bootstrap](https://getbootstrap.com/)
 - [SASS](https://sass-lang.com/)
+- [Ionic](https://ionicframework.com/)
 - [vue-i18n](https://github.com/intlify/vue-i18n-next)
 - [localStorage API](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
 - [vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/docs/vue-testing-library/intro)

@@ -34,4 +34,4 @@ jobs:
       - name: Deploy to GitHub Pages
         if: success()
         run: |
-          npx gh-pages -d dist -u "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          npx gh-pages -d dist
