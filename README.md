@@ -67,20 +67,20 @@
 ```
 src/
 ├── views/
-│ └── messenger/
-│       ├── desktop/DesktopMessenger.vue      # Vista principal de mensajería en dispositivos de escritorio o tablets
-│       └── mobile/MobileMessenger.vue        # Vista principal de mensajería en dispositivos móviles
+│   └── messenger/
+│       ├── desktop/DesktopMessenger.vue        # Vista principal de mensajería en dispositivos de escritorio o tablets
+│       └── mobile/MobileMessenger.vue          # Vista principal de mensajería en dispositivos móviles
 ├── composables/
-│ └── useMessengerMock.ts                     # Datos mock localizados (i18n-ready)
+│   └── useMessengerMock.ts                     # Datos mock localizados (i18n-ready)
 ├── i18n/
-│ └── messages.ts                             # Textos en español e inglés
+│   └── messages.ts                             # Textos en español e inglés
 ├── stores/
-│ └── themeStore.ts                           # Store para modo oscuro/claro
+│   └── themeStore.ts                           # Store para modo oscuro/claro
 ├── test/
-        ├── Messenger.spec.ts                 # Tests unitarios con Testing Library en vista de escritorio
-│       └── MobileMessenger.spec.ts           # Tests unitarios con Testing Library en vista móvil
-├── App.vue                                   # Componente raíz
-├── main.ts                                   # Punto de entrada
+    ├── Messenger.spec.ts                       # Tests unitarios con Testing Library en vista de escritorio
+│   └── MobileMessenger.spec.ts                 # Tests unitarios con Testing Library en vista móvil
+├── App.vue                                     # Componente raíz
+├── main.ts                                     # Punto de entrada
 └── ...
 ```
 
