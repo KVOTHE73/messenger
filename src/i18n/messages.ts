@@ -9,6 +9,7 @@ export default {
       groups: "Grupos",
       searchPlaceholder: "Buscar...",
       textareaPlaceholder: "Escribe un mensaje…",
+      private: "Chat privado",
       noPermissionsPlaceholder:
         "No tienes permiso para escribir en este canal.",
       dropdownMenu: {
@@ -41,6 +42,7 @@ export default {
       groups: "Groups",
       searchPlaceholder: "Search...",
       textareaPlaceholder: "Write a message…",
+      private: "Private chat",
       noPermissionsPlaceholder:
         "You don't have permission to write a message in this channel.",
       dropdownMenu: {

@@ -2,7 +2,9 @@
 
 [![CI](https://github.com/KVOTHE73/messenger/actions/workflows/ci.yml/badge.svg)](https://github.com/KVOTHE73/messenger/actions/workflows/ci.yml)
 
-🔶 Una interfaz de mensajería tipo Slack o Discord, construida con **Vue 3**, pensada para escritorio.
+🔶 Una interfaz de mensajería tipo Slack o Discord, construida con **Vue 3** y \*_TypeScript_, pensada para escritorio.
+
+🔶 Incluye también una versión móvil optimizada con \*_Ionic_, que se renderiza automáticamente según el tamaño de la pantalla.
 
 🔶 Permite navegar entre canales, grupos, chats privados y documentos organizados en carpetas.
 
@@ -31,11 +33,11 @@
 
 - `#general`
 - `#buzón`
-- `#proyectos`
+- `#informática`
 
 🔹 Carpeta de documentos:
 
-- `Recibos` → contiene archivos PDF de ejemplo
+- `Docs` → contiene archivos PDF de ejemplo
 
 ---
 
@@ -63,17 +65,19 @@
 src/
 ├── views/
 │ └── messenger/
-│ └── desktop/DesktopMessenger.vue      # Vista principal de mensajería
+│       ├── desktop/DesktopMessenger.vue      # Vista principal de mensajería en dispositivos de escritorio o tablets
+│       └── mobile/MobileMessenger.vue        # Vista principal de mensajería en dispositivos móviles
 ├── composables/
-│ └── useMessengerMock.ts               # Datos mock localizados (i18n-ready)
+│ └── useMessengerMock.ts                     # Datos mock localizados (i18n-ready)
 ├── i18n/
-│ └── messages.ts                       # Textos en español e inglés
+│ └── messages.ts                             # Textos en español e inglés
 ├── stores/
-│ └── themeStore.ts                     # Store para modo oscuro/claro
+│ └── themeStore.ts                           # Store para modo oscuro/claro
 ├── test/
-│ └── Messenger.spec.ts                 # Tests unitarios con Testing Library
-├── App.vue                             # Componente raíz
-├── main.ts                             # Punto de entrada
+        ├── Messenger.spec.ts                 # Tests unitarios con Testing Library en vista de escritorio
+│       └── MobileMessenger.spec.ts           # Tests unitarios con Testing Library en vista móvil
+├── App.vue                                   # Componente raíz
+├── main.ts                                   # Punto de entrada
 └── ...
 ```
 
@@ -86,7 +90,7 @@ src/
 - 💬 Sistema de mensajería con emojis y archivos
 - 📁 Navegación por canales, grupos y carpetas
 - 📦 Visualización de documentos
-- 📱 Responsive en pantallas pequeñas
+- 📱 Responsive completo: cambia automáticamente entre vista móvil (Ionic) y escritorio (Bootstrap)
 
 ---
 
@@ -108,10 +112,16 @@ src/
   - ✓ cambia el idioma a inglés al hacer clic en el botón de la bandera 22ms
   - ✓ cambia a modo oscuro al hacer clic en el botón de toggle de tema 16ms
 
-- 🔹 Test Files 1 passed (1)
-- 🔹 Tests 5 passed (5)
-- 🔹 Start at 20:16:49
-- 🧪 Duration 5.58s
+- 🔹 src/test/MobileMessenger.spec.ts (3 tests) 253ms
+
+  - ✓ cambia el idioma a inglés al hacer clic en el botón de la bandera 21ms
+  - ✓ cambia a modo oscuro al hacer clic en el botón de toggle de tema 15ms
+  - ✓ muestra los botones de segmentos al iniciar 69ms
+
+- 🔹 Test Files 2 passed (2)
+- 🔹 Tests 8 passed (8)
+- 🔹 Start at 19:07:35
+- 🧪 Duration 6.37s
 
 ---
 

@@ -1,20 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
-  /* {
-    path: "/",
-    name: "Messenger",
-    component: () =>
-      import(
-        "../views/messenger/MessengerRouting.vue"
-      ),
-  }, */
   {
     path: "/",
     name: "Messenger",
     component: () =>
       import(
-        /* webpackChunkName: "Messenger" */ "../views/messenger/DesktopMessenger.vue"
+        /* webpackChunkName: "Messenger" */ "../views/messenger/MessengerRouting.vue"
       ),
   },
 ];

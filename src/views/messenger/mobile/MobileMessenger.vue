@@ -2,17 +2,58 @@
   <ion-page id="mobileMessenger">
     <!-- 1️⃣ VISTA LISTADO (no inChat) -->
     <template v-if="!inChat">
-      <!-- Menú y Header principales -->
-      <AppSideMenu appName="mensajeria" />
-      <AppHeader
-        appName="SofyMensajería"
-        :userName="userName"
-        :userPic="userPic"
-      />
+      <!-- 🔹 Barra superior extra con selector de idioma y tema -->
+      <ion-header v-if="!inChat">
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-avatar
+              data-testid="user-avatar"
+              class="mx-2"
+              title="Nacho Rodriguez"
+            >
+              <img
+                :src="currentMock.users['yo'].avatar"
+                alt="avatar"
+                class="avatar-header"
+              />
+            </ion-avatar>
+          </ion-buttons>
+          <ion-buttons slot="end">
+            <ion-button
+              data-testid="btn-toggle-theme"
+              @click="toggleDarkMode"
+              >{{ isDarkMode ? "☀️" : "🌙" }}</ion-button
+            >
+            <ion-button
+              :aria-label="t('lang.es')"
+              :aria-pressed="isLangEs"
+              :title="t('lang.es')"
+              :class="{ active: isLangEs }"
+              data-testid="btn-lang-es"
+              @click="setLang('es')"
+              ><img :src="flagEs" alt="Español" class="flag"
+            /></ion-button>
+            <ion-button
+              :aria-label="t('lang.en')"
+              :aria-pressed="isLangEn"
+              :title="t('lang.en')"
+              :class="{ active: isLangEn }"
+              data-testid="btn-lang-en"
+              @click="setLang('en')"
+              ><img :src="flagEn" alt="Inglés" class="flag"
+            /></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
 
+      <!-- 🔹 CONTENIDO PRINCIPAL -->
       <ion-content id="mensajeria" :fullscreen="true">
         <!-- 🔹 REFRESCO DE LA INFO, SIMILAR AL BOTÓN REFRESCAR -->
-        <ion-refresher slot="fixed" @ionRefresh="handleRefresh">
+        <ion-refresher
+          data-testid="refresher"
+          slot="fixed"
+          @ionRefresh="handleRefresh"
+        >
           <ion-refresher-content
             pulling-text="Desliza para recargar"
             refreshing-spinner="circles"
@@ -20,67 +61,98 @@
           />
         </ion-refresher>
 
-        <!-- 🔹 SPINNER DE CARGA -->
-        <div v-if="isLoading" class="spinner-container">
+        <!-- 🌀 SPINNER DE CARGA -->
+        <div
+          data-testid="loading-spinner"
+          v-if="isLoading"
+          class="spinner-container"
+        >
           <ion-spinner name="lines-sharp" color="secondary" />
         </div>
 
         <div v-else>
-          <!-- Segment control -->
+          <!-- 🧭 VISTA DE LISTADO -->
           <ion-segment v-model="section" scrollable>
-            <ion-segment-button value="canales">Canales</ion-segment-button>
-            <ion-segment-button value="grupos">Grupos</ion-segment-button>
-            <ion-segment-button value="privadas">Chats</ion-segment-button>
-            <ion-segment-button value="docs">Docs</ion-segment-button>
+            <ion-segment-button data-testid="segment-canales" value="canales">{{
+              t("messenger.channels")
+            }}</ion-segment-button>
+            <ion-segment-button data-testid="segment-grupos" value="grupos">{{
+              t("messenger.groups")
+            }}</ion-segment-button>
+            <ion-segment-button data-testid="segment-privadas" value="privadas"
+              >Chats</ion-segment-button
+            >
+            <ion-segment-button data-testid="segment-docs" value="docs"
+              >Docs</ion-segment-button
+            >
           </ion-segment>
 
-          <!-- Lista de items según sección -->
-          <!-- Si estamos en Docs, mostramos carpetas -->
-          <template v-if="section === 'docs'">
-            <ion-item
-              v-for="folder in menuItems"
-              :key="folder.id"
-              button
-              @click="openChat(folder.id)"
-            >
-              <Icon
-                slot="start"
-                :icon="
-                  folder.id === selectedId
-                    ? 'solar:folder-open-bold'
-                    : 'solar:folder-bold'
-                "
-                class="fs-24px text-warning"
-              />
-              <ion-label>
-                <h2>{{ folder.name }}</h2>
-              </ion-label>
-            </ion-item>
-          </template>
+          <!-- 📁 LISTA SEGÚN SECCIÓN -->
+          <ion-list>
+            <!-- 🔹 PRIVADAS -->
+            <template v-if="section === 'privadas'">
+              <ion-item
+                data-testid="menu-item"
+                v-for="item in menuItems"
+                :key="item.id"
+                button
+                @click="openChat(item.id)"
+              >
+                <ion-avatar slot="start">
+                  <img :src="(item as IPrivateItem).avatar" />
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ item.name }}</h2>
+                </ion-label>
+              </ion-item>
+            </template>
 
-          <!-- En los demás casos -->
-          <template v-else>
-            <ion-item
-              v-for="item in menuItems"
-              :key="item.id"
-              button
-              @click="openChat(item.id)"
-            >
-              <ion-avatar slot="start" v-if="section === 'privadas'">
-                <img :src="item.avatar" />
-              </ion-avatar>
-              <Icon
-                slot="start"
-                v-else
-                :icon="item.icon"
-                class="fs-24px text-theme"
-              />
-              <ion-label>
-                <h2>{{ item.name }}</h2>
-                <p>{{ item.description }}</p>
-              </ion-label>
-            </ion-item>
-          </template>
+            <!-- 🔹 CANALES o GRUPOS -->
+            <template v-else-if="section === 'canales' || section === 'grupos'">
+              <ion-item
+                v-for="item in menuItems"
+                :key="item.id"
+                button
+                @click="openChat(item.id)"
+                :data-testid="`channel-${item.name
+                  ?.toLowerCase()
+                  .replace(/\s/g, '-')}`"
+              >
+                <Icon
+                  slot="start"
+                  :icon="(item as IChannel).icon || 'mdi:chat'"
+                  class="fs-24px"
+                />
+                <ion-label>
+                  <h2>{{ item.name }}</h2>
+                  <p>{{ (item as IChannel).description }}</p>
+                </ion-label>
+              </ion-item>
+            </template>
+
+            <!-- 🔹 DOCS -->
+            <template v-else>
+              <ion-item
+                v-for="item in menuItems"
+                :key="item.id"
+                button
+                @click="openChat(item.id)"
+              >
+                <Icon
+                  slot="start"
+                  :icon="
+                    item.id === selectedId
+                      ? 'solar:folder-open-bold'
+                      : 'solar:folder-bold'
+                  "
+                  class="fs-24px text-warning"
+                />
+                <ion-label>
+                  <h2>{{ item.name }}</h2>
+                </ion-label>
+              </ion-item>
+            </template>
+          </ion-list>
         </div>
       </ion-content>
     </template>
@@ -208,40 +280,43 @@
             :class="['chat-item', msg.senderId === 'yo' ? 'sent' : 'received']"
           >
             <!-- Avatar -->
-            <ion-avatar class="chat-avatar" v-if="users[msg.senderId]">
-              <img :src="users[msg.senderId].avatar" />
+            <ion-avatar
+              class="chat-avatar"
+              v-if="currentMock.users[msg.senderId]"
+            >
+              <img :src="currentMock.users[msg.senderId].avatar" />
             </ion-avatar>
 
             <!-- Burbuja de mensaje -->
             <div class="chat-bubble">
-              <div class="bubble-author">{{ users[msg.senderId].name }}</div>
-              <!-- Si viene archivo -->
-              <div v-if="msg.fileUrl" class="bubble-content">
-                <a
-                  :href="msg.fileUrl"
-                  class="fileUpload-text"
-                  target="_blank"
-                  v-html="highlight(msg.fileName || '')"
-                ></a>
+              <div class="bubble-author">
+                {{ currentMock.users[msg.senderId]?.name }}
               </div>
-              <!-- Si viene texto -->
-              <div
-                v-else
-                class="bubble-content"
-                v-html="highlight(msg.content || '')"
-              ></div>
+              <!-- Si viene archivo -->
+              <div class="bubble-content">
+                <template v-if="msg.contentKey">
+                  {{ t(msg.contentKey) }}
+                </template>
+                <template v-else-if="msg.fileUrl">
+                  <a :href="msg.fileUrl" target="_blank">{{ msg.fileName }}</a>
+                </template>
+                <template v-else>
+                  <span v-html="highlight(msg.content || '')"></span>
+                </template>
+              </div>
               <div class="bubble-time">{{ msg.timestamp }}</div>
             </div>
           </div>
         </div>
       </ion-content>
 
-      <!-- Input Bar -->
+      <!-- 📝 INPUT DE MENSAJE -->
       <ion-footer v-if="canWrite && section !== 'docs'">
         <ion-toolbar>
           <ion-item lines="none">
             <!-- Input de texto -->
             <ion-textarea
+              data-testid="chat-input"
               v-model="newMessage"
               placeholder="Escribe un mensaje…"
               :auto-grow="true"
@@ -251,6 +326,7 @@
               class="flex-grow"
             />
             <ion-button
+              data-testid="btn-send-message"
               slot="end"
               fill="clear"
               v-if="isTyping || newMessage.trim()"
@@ -279,7 +355,7 @@
       </ion-footer>
     </template>
 
-    <!-- botón para añadir nuevo canal o grupo -->
+    <!-- ➕ botón para añadir nuevo canal o grupo -->
     <ion-fab
       v-if="!inChat"
       vertical="bottom"
@@ -323,11 +399,25 @@
 </template>
 
 <script setup lang="ts">
+// ==============================================================================
+// 🔹 VISTA MÓVIL DE MENSAJERÍA
+//    💡 Adaptada a:
+//       - Uso de useMessengerMock
+//       - Traducción con contentKey + t()
+//       - Modo oscuro/claro
+//       - Soporte de idiomas
+//       - Scroll dinámico y DEMO
+// ==============================================================================
+
 //─── 📌 Core ──────────────────────────────────────────────────────
 
 import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { App } from "@capacitor/app";
+import { useI18n } from "vue-i18n";
+// 🌐 Flags
+import flagEs from "@/assets/flags/es.png";
+import flagEn from "@/assets/flags/en.png";
 
 //─── 📌 Plugins ───────────────────────────────────────────────────
 
@@ -372,9 +462,6 @@ import {
 import { Icon } from "@iconify/vue";
 
 //─── 📌 Componentes ──────────────────────────────────────────────
-
-import AppSideMenu from "@/components/_common/ionic/AppSideMenu.vue";
-import AppHeader from "@/components/_common/ionic/AppHeader.vue";
 import AppFooter from "@/components/_common/ionic/AppFooter.vue";
 import CreateChannelModal from "../components/CreateChannelModal.vue";
 
@@ -384,26 +471,37 @@ import type {
   IDocFile,
   IMessage,
   IPrivateConversation,
+  IChannel,
+  IPrivateItem,
+  IDocFolder,
 } from "../../../interfaces/IMockMessengerData";
 
-//─── 📌 Stores ───────────────────────────────────────────────────
-/* import {
-  channels,
-  groups,
-  privateConversations,
-  docFolders,
-  users,
-  channelMembers,
-  conversationMessages,
-} from "../../../stores/mocks/mockMessengerDataEn"; // mock de datos */
+//─── 📌 Stores ──────────────────────────────────────────────────
+import { useThemeStore } from "../../../stores/themeStore";
+import { storeToRefs } from "pinia";
 
-// Estado de la vista y stores
+//─── 📌 Composables ─────────────────────────────────────────────
+import { useMessengerMock } from "../../../composables/useMessengerMock";
+
+//─── 📌 Instancias ──────────────────────────────────────────────
 const router = useRouter();
+const { t, locale } = useI18n();
+const currentMock = useMessengerMock();
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
 
 //─── 📌 Variables reactivas ─────────────────────────────────────
 
-// estado del spinner
+// 🔄 estado del spinner
 const isLoading = ref<boolean>(true);
+
+// 🔄 demo
+const DEMO = true;
+
+// 🔄 modo oscuro
+const isDarkMode = computed(() => theme.value === "dark");
+const toggleDarkMode = () => themeStore.toggleTheme();
+
 // Datos del usuario logueado
 const userName = ref<string>();
 const userPic = ref<string>();
@@ -435,15 +533,13 @@ const footerButtons = ref([
 
 // navegación entre lista/chat
 const section = ref<"canales" | "grupos" | "privadas" | "docs">("canales");
-const selectedId = ref<string>(channels[0].id);
+const selectedId = ref<string>("");
 const inChat = ref(false); // modo listado vs chat
 const searchTerm = ref<string>(""); // filtro para la lista de usuarios
-// convierte el mock en algo reactivo
-const directConversations = ref<IPrivateConversation[]>([
-  ...privateConversations,
-]);
 // mensajes, docs, new message
-const messageStore = ref(conversationMessages);
+const messageStore = ref<Record<string, IMessage[]>>({
+  ...(currentMock.value?.conversationMessages ?? {}),
+});
 const newMessage = ref("");
 const isTyping = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -451,26 +547,32 @@ const showMembers = ref(false); // state para desplegar el acordeón de usuarios
 const popoverEvent = ref<Event | null>(null);
 const chatContent = ref<any>(null);
 const showCreate = ref<boolean>(false); // manejador de visibilidad del modal de creación de canal
+const directConversations = ref<IPrivateConversation[]>([
+  ...(currentMock.value?.privateConversations ?? []),
+]);
 
 //─── 📌 Computeds ───────────────────────────────────────────────
 
+// 🔹 Idioma actual
+const isLangEs = computed(() => locale.value === "es");
+const isLangEn = computed(() => locale.value === "en");
+
 // 🔹 Permisos de escritura (ejemplo: sólo admins en 'general')
 const canWrite = computed(() => {
-  if (section.value === "canales" && selectedId.value === "general") {
-    return currentUser.value.roles.includes("admin");
-  }
-  return true;
+  return section.value !== "canales" || selectedId.value !== "general"
+    ? true
+    : currentUser.value.roles.includes("admin");
 });
 
 // 🔹 Mapea el valor de section a un título legible
 const sectionLabel = computed(() => {
   switch (section.value) {
     case "canales":
-      return "Canales";
+      return t("messenger.channels");
     case "grupos":
-      return "Grupos";
+      return t("messenger.groups");
     case "privadas":
-      return "Chats";
+      return t("messenger.private");
     case "docs":
       return "Docs";
     default:
@@ -484,66 +586,71 @@ const currentHeaderTitle = computed(() => {
 
   let name = "";
   if (section.value === "docs") {
-    name = docFolders.find((f) => f.id === selectedId.value)?.name ?? "";
+    name =
+      currentMock.value.docFolders.find((f) => f.id === selectedId.value)
+        ?.name ?? "";
   } else {
     name = menuItems.value.find((i) => i.id === selectedId.value)?.name ?? "";
   }
 
-  return `${sectionLabel.value}/${name}`;
+  return `${sectionLabel.value} / ${name}`;
 });
 
 // 🔹 Carga los chats en cada canal
-const menuItems = computed<any[]>(() => {
-  if (section.value === "canales") return channels;
-  if (section.value === "grupos") return groups;
-  if (section.value === "privadas")
+const menuItems = computed<(IPrivateItem | IChannel | IDocFolder)[]>(() => {
+  if (section.value === "privadas") {
     return directConversations.value.map((conv) => {
-      // Intento de encontrar al otro participante
       const otherId = conv.participants.find(
         (id) => id !== currentUser.value.id
       );
-      if (!otherId) {
-        console.warn(`Conversación ${conv.id} sin otro participante`);
-        // Devuelvo un fallback para que no rompa el render
-        return {
-          id: conv.id,
-          avatar: "/assets/img/no-avatar.png",
-          name: "Desconocido",
-        };
-      }
-      const u = users[otherId];
-      if (!u) {
-        console.warn(`No hay datos de usuario para el id "${otherId}"`);
-        return {
-          id: conv.id,
-          avatar: "/assets/img/no-avatar.png",
-          name: "Desconocido",
-        };
-      }
-      // Ahora que sé que otherId es string y users[otherId] existe, TS me deja indexar
-      return {
+      const user = otherId ? currentMock.value.users[otherId] : null;
+      const item: IPrivateItem = {
         id: conv.id,
-        avatar: u.avatar,
-        name: u.name,
+        name: user?.name ?? "Desconocido",
+        avatar: user?.avatar ?? "/assets/img/no-avatar.png",
       };
+      return item;
     });
-  return docFolders;
+  }
+
+  if (section.value === "canales")
+    return currentMock.value.channels.map((c) => ({
+      id: c.id,
+      name: c.name,
+      icon: c.icon,
+      description: c.description,
+    })) as IChannel[];
+  if (section.value === "grupos")
+    return currentMock.value.groups.map((g) => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      description: g.description,
+    })) as IChannel[];
+  return currentMock.value.docFolders.map((d) => ({
+    id: d.id,
+    name: d.name,
+  })) as IDocFolder[];
 });
 
 // 🔹 Computed que nos da los usuarios del canal/grupo actual
 const chatMembers = computed(() => {
   if (section.value === "canales" || section.value === "grupos") {
-    return channelMembers[selectedId.value].map((id) => users[id]);
+    return (
+      currentMock.value.channelMembers[selectedId.value]?.map(
+        (id) => currentMock.value.users[id]
+      ) || []
+    );
   }
   return [];
 });
 
-const messages = computed<IMessage[]>(
-  () => messageStore.value[selectedId.value] || []
-);
+const messages = computed(() => messageStore.value[selectedId.value] || []);
 const fileList = computed<IDocFile[]>(() => {
-  const f = docFolders.find((f) => f.id === selectedId.value);
-  return f ? f.files : [];
+  const folder = currentMock.value.docFolders.find(
+    (f) => f.id === selectedId.value
+  );
+  return folder?.files || [];
 });
 
 // 🔹 Computed filtra por el valor introducido en el campo de búsqueda del input
@@ -551,11 +658,12 @@ const filteredMessages = computed(() => {
   const term = searchTerm.value.trim().toLowerCase();
   if (!term) return messages.value;
   return messages.value.filter((msg) => {
-    // todo en minúsculas para comparar
     const text = (msg.content || "").toLowerCase();
     const emoji = (msg.emoji || "").toLowerCase();
     const file = (msg.fileName || "").toLowerCase();
-    const author = (users[msg.senderId]?.name || "").toLowerCase();
+    const author = (
+      currentMock.value.users[msg.senderId]?.name || ""
+    ).toLowerCase();
     return (
       text.includes(term) ||
       emoji.includes(term) ||
@@ -618,36 +726,35 @@ const openMembersPopover = (ev: Event): void => {
 /**
  * Abre o crea un chat privado con `memberId`
  */
-const openDirectChat = async (memberId: string): Promise<void> => {
-  // 1️⃣ Cierra el popover de miembros para que Ionic desmont
+async function openDirectChat(memberId: string) {
   await popoverController.dismiss().catch(() => {});
   showMembers.value = false;
 
-  // 2️⃣ Ahora puedes buscar o crear la conversación
-  let conv = directConversations.value.find(
+  let conv = currentMock.value.privateConversations.find(
     (c) => c.participants.includes("yo") && c.participants.includes(memberId)
   );
+
   if (!conv) {
     const newId = `chat-${memberId}-${Date.now()}`;
     conv = { id: newId, participants: ["yo", memberId] };
-    directConversations.value.push(conv);
+    currentMock.value.privateConversations.push(conv);
     messageStore.value[newId] = [];
   }
 
-  // 3️⃣ Navega al chat
   section.value = "privadas";
   selectedId.value = conv.id;
   inChat.value = true;
-};
+}
 
 /**
  * Envía un mensaje al chat
  */
-const sendMessage = (): void => {
+function sendMessage() {
   if (!newMessage.value.trim()) return;
-  const ts = new Date().toLocaleTimeString("es-ES", {
+  const ts = new Date().toLocaleTimeString(locale.value, {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: true,
   });
   const conv = (messageStore.value[selectedId.value] ||= []);
   conv.push({
@@ -657,7 +764,7 @@ const sendMessage = (): void => {
     timestamp: ts,
   });
   newMessage.value = "";
-};
+}
 
 /**
  * Abre el diálogo de selección de archivos.
@@ -736,6 +843,27 @@ const highlight = (text: string): string => {
   return text.replace(re, "<mark>$1</mark>");
 };
 
+// Idioma actual
+function setLang(lang: string) {
+  locale.value = lang;
+  localStorage.setItem("lang", lang);
+}
+
+// Modo oscuro
+/* function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value;
+  const cls = document.body.classList;
+  if (isDarkMode.value) {
+    cls.add("theme-dark");
+    cls.remove("theme-light");
+    localStorage.setItem("theme", "dark");
+  } else {
+    cls.add("theme-light");
+    cls.remove("theme-dark");
+    localStorage.setItem("theme", "light");
+  }
+} */
+
 // función reutilizable de scroll
 const scrollToBottom = async (): Promise<void> => {
   if (!chatContent.value) return;
@@ -778,10 +906,34 @@ watch(
   }
 );
 
+// 🔄 Localización dinámica de mensajes
+watch(locale, () => {
+  const updated = currentMock.value.conversationMessages;
+  for (const id in updated) {
+    if (messageStore.value[id]) {
+      messageStore.value[id] = messageStore.value[id].map((msg) => {
+        const updatedMsg = updated[id].find((m) => m.id === msg.id);
+        return updatedMsg ? { ...msg, content: updatedMsg.content } : msg;
+      });
+    } else {
+      messageStore.value[id] = [...updated[id]];
+    }
+  }
+});
+
 //─── 📌 Ciclo de vida ───────────────────────────────────────────
 
 onMounted(async () => {
+  if (currentMock.value?.channels?.length) {
+    selectedId.value = currentMock.value.channels[0].id;
+  }
+
   fetchEmployee();
+
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark") toggleDarkMode();
+  themeStore.applyTheme();
+
   isLoading.value = false;
 
   await nextTick();
@@ -789,8 +941,72 @@ onMounted(async () => {
   App.addListener("backButton", () => {
     // Deshabilita la acción por defecto del back button
   });
+
+  if (DEMO) {
+    setInterval(() => {
+      if (section.value === "docs") return;
+
+      const id = selectedId.value;
+      let validUserIds: string[] = [];
+
+      if (section.value === "canales" || section.value === "grupos") {
+        validUserIds =
+          currentMock.value.channelMembers[id]?.filter((u) => u !== "yo") || [];
+      } else if (section.value === "privadas") {
+        const conv = currentMock.value.privateConversations.find(
+          (c) => c.id === id
+        );
+        validUserIds = conv?.participants.filter((u) => u !== "yo") || [];
+      }
+
+      const senderId =
+        validUserIds[Math.floor(Math.random() * validUserIds.length)];
+      const user = currentMock.value.users[senderId];
+      if (!user) return;
+
+      const contentKey = "messenger.demoMessages.demo-1"; // simplificado
+      const ts = new Date().toLocaleTimeString(locale.value, {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const conv = (messageStore.value[id] ||= []);
+      conv.push({
+        id: `${Date.now()}`,
+        senderId,
+        contentKey,
+        timestamp: ts,
+      });
+    }, 5000);
+  }
 });
 </script>
+<style>
+.theme-dark {
+  --ion-background-color: #121212;
+  --ion-text-color: #ffffff;
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+/* Todos los botones en modo oscuro → texto gris claro */
+.theme-dark ion-segment-button::part(native) {
+  color: #a8a8a8;
+}
+
+/* Excepto el botón activo → color por defecto (blanco, primario, etc.) */
+.theme-dark ion-segment-button.segment-button-checked::part(native) {
+  color: var(--ion-color-primary); /* o blanco: #fff */
+  font-weight: bold;
+}
+
+.theme-light {
+  --ion-background-color: #ffffff;
+  --ion-text-color: #000000;
+  background-color: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+</style>
 
 <style scoped lang="scss">
 /* ─── 📌 Layout general de la vista ───────────────────────────────── */
@@ -800,6 +1016,19 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+/* Avatar del usuario en el header */
+.avatar-header {
+  width: 40px;
+  height: 40px;
+  margin-top: 0.8rem;
+}
+
+/* Banderas de cambio de isioma en el header */
+.flag {
+  width: 25px;
+  height: 25px;
 }
 
 /* Popover de miembros de los canales y grupos */

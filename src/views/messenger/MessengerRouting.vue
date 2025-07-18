@@ -1,14 +1,27 @@
+<!--
+==========================================================================================================================
+🔷 MESSENGER ROUTING
+   💡 Esta vista es la encargada de decidir qué interfaz mostrar (escritorio o móvil) según el dispositivo del usuario:
+       - Si el usuario está en móvil, carga automáticamente la vista MobileMessenger.vue
+       - Si el usuario está en escritorio, carga DesktopMessenger.vue
+       - Esta lógica es reactiva, se actualiza si se cambia el tamaño de pantalla (por ejemplo, girar el dispositivo)
+==========================================================================================================================
+-->
 <template>
-  <div>
-    <DesktopMessenger v-if="!isMobile" />
-    <MobileMessenger v-if="isMobile" />
-  </div>
+  <!-- 🔀 Componente dinámico que cambia según el tipo de dispositivo -->
+  <component :is="isMobile ? MobileMessenger : DesktopMessenger" />
 </template>
 
 <script setup lang="ts">
-// componentes
+// ==============================================================================
+// ⛳ IMPORTS
+// ==============================================================================
+import { useDeviceMode } from "../../composables/useDeviceMode";
 import DesktopMessenger from "./desktop/DesktopMessenger.vue";
 import MobileMessenger from "./mobile/MobileMessenger.vue";
-// variables
-const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+// ==============================================================================
+// 📱 DETECCIÓN DINÁMICA DE DISPOSITIVO
+// ==============================================================================
+const { isMobile } = useDeviceMode();
 </script>

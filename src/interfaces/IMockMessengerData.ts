@@ -119,3 +119,25 @@ export interface IMockMessengerData {
   /** Mapa de mensajes por ID de canal/conversación */
   conversationMessages: Record<string, IMessage[]>;
 }
+
+/**
+ * Representa al usuario de una conversación privada.
+ */
+export interface IPrivateItem {
+  /** ID único del canal o grupo */
+  id: string;
+  /** Nombre del canal/grupo */
+  name: string;
+  /** URL del avatar o imagen de perfil */
+  avatar: string;
+}
+
+/**
+ * Representa al canal de docs.
+ */
+export interface IDocFolder {
+  /** ID único del canal o grupo */
+  id: string;
+  /** Nombre del canal/grupo */
+  name: string;
+}

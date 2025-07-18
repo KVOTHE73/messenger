@@ -14,10 +14,7 @@ const i18n = createI18n({
 function renderMessenger() {
   return render(DesktopMessenger, {
     global: {
-      plugins: [
-        i18n,
-        // createTestingPinia({ createSpy: vi.fn }) // ← Descomenta si usas Pinia
-      ],
+      plugins: [i18n],
     },
   });
 }
