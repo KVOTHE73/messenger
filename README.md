@@ -43,7 +43,8 @@
 
 ## 📸 Vista previa
 
-![Vista de messenger](./public/messengerPreview.png)
+![Vista de messenger versión de escritorio](./public/messengerDesktopPreview.png)
+![Vista de messenger versión móvil](./public/messengerMobilePreview.png)
 
 ---
 
