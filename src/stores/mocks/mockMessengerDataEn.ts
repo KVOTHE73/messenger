@@ -64,7 +64,7 @@ const mockMessengerDataEn: IMockMessengerData = {
       email: "admin@testing.som",
       phone: "+34 111 11 11 11",
       roles: ["admin"],
-      avatar: "/assets/img/user/user-1.jpg",
+      avatar: `${import.meta.env.BASE_URL}assets/img/user/user-1.jpg`,
     },
     maría: {
       id: "maría",
@@ -73,7 +73,7 @@ const mockMessengerDataEn: IMockMessengerData = {
       email: "maria@testing.som",
       phone: "+34 222 22 22 22",
       roles: ["member"],
-      avatar: "/assets/img/user/user-12.jpg",
+      avatar: `${import.meta.env.BASE_URL}assets/img/user/user-12.jpg`,
     },
     pedro: {
       id: "pedro",
@@ -82,7 +82,7 @@ const mockMessengerDataEn: IMockMessengerData = {
       email: "pedro@testing.som",
       phone: "+34 444 44 44 44",
       roles: ["member"],
-      avatar: "/assets/img/user/user-11.jpg",
+      avatar: `${import.meta.env.BASE_URL}assets/img/user/user-11.jpg`,
     },
     yo: {
       id: "yo",
@@ -91,7 +91,7 @@ const mockMessengerDataEn: IMockMessengerData = {
       email: "yo@testing.som",
       phone: "+34 333 33 33 33",
       roles: ["member"],
-      avatar: "/assets/img/user/user-8.jpg",
+      avatar: `${import.meta.env.BASE_URL}assets/img/user/user-8.jpg`,
     },
   },
   channelMembers: {
