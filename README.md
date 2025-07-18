@@ -97,7 +97,7 @@ src/
 
 ---
 
-## 🧩 Estructura del componente principal
+## 🧩 Estructura de los componente principales
 
 - `template`: Contiene la interfaz completa dividida en menú lateral, zona de mensajes y documentos
 - `script setup`: Lógica organizada por secciones (mensajes, navegación, temas, idioma)
@@ -146,7 +146,7 @@ npm run dev
 
 ## 📅 Metainformación
 
-📁 Proyecto: Login
+📁 Proyecto: Messenger
 
 🧠 Autor: [Nacho Rodríguez](https://www.nacho-rodriguez.com)
 

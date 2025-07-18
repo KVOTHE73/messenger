@@ -35,12 +35,12 @@ const mockMessengerDataEn: IMockMessengerData = {
         {
           id: "n1",
           name: "Payslip January 2025.pdf",
-          url: "/docs/nominas/ene2025.pdf",
+          url: `${import.meta.env.BASE_URL}assets/docs/nominas/ene2025.pdf`,
         },
         {
           id: "n2",
           name: "Payslip February 2025.pdf",
-          url: "/docs/nominas/feb2025.pdf",
+          url: `${import.meta.env.BASE_URL}assets/docs/nominas/feb2025.pdf`,
         },
       ],
     },
@@ -51,7 +51,7 @@ const mockMessengerDataEn: IMockMessengerData = {
         {
           id: "c1",
           name: "Contract Juan Pérez.pdf",
-          url: "/docs/contratos/juan.pdf",
+          url: `${import.meta.env.BASE_URL}assets/docs/contratos/juan.pdf`,
         },
       ],
     },
